@@ -38,7 +38,7 @@ export const getImageSize = (
 export const expandUrlIfNeeded = (url: string): string => {
   if (!url) return "";
   if (!url.startsWith("http://") && !url.startsWith("https://"))
-    return `https://leventehegedus.com/wp-content/uploads/${url}`;
+    return `${window.origin}/wp-content/uploads/${url}`;
 
   return url;
 };
