@@ -5,8 +5,7 @@ import PhotoSwipeLightbox from "photoswipe/lightbox";
 import PhotoAlbum from "react-photo-album";
 import "photoswipe/style.css";
 import { Spinner } from "./Spinner/Spinner";
-// @ts-ignore
-import PhotoSwipe from "../node_modules/photoswipe/dist/photoswipe.esm.js";
+import PhotoSwipe from "photoswipe";
 
 type Image = {
   src: string;
@@ -25,7 +24,6 @@ async function fetchImageDimensions(urls: string[]): Promise<Image[]> {
 }
 
 function App(props: { elementId?: string, images: string[], rowheight?: number }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const images: string[] = props.images;
   const galleryID = "gallery-" +( props.elementId ??"react-image-display");
   const height = props.rowheight ?? 400;
@@ -53,7 +51,7 @@ function App(props: { elementId?: string, images: string[], rowheight?: number }
     return () => {
       lightbox?.destroy();
     };
-  }, [lightbox, query.data]);
+  }, [galleryID, lightbox, query.data]);
 
   if (query.isPending)
     return (
