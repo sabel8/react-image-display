@@ -10,7 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@tanstack/react-query": "^5.45.1",
     "photoswipe": "^5.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -10,15 +10,12 @@ export type GalleryImage = {
   src: string;
   srcset: string;
   sizes: string;
+  width: number;
+  height: number;
 };
 
 export type Gallery = {
   elementid: string;
   images: GalleryImage[];
   rowheight: number;
-};
-
-export type RenderedImage = GalleryImage & {
-  width: number;
-  height: number;
 };

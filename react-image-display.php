@@ -28,8 +28,11 @@ add_shortcode('react_image_display', function ($atts) {
     $imagesWithResponsiveData = array_map(function ($image) {
         $imagePath = trim($image);
         $attachmentId = attachment_url_to_postid($imagePath);
+        $imageSrc = wp_get_attachment_image_src($attachmentId, 'large');
         return [
-            "src" => wp_get_attachment_image_src($attachmentId, 'large')[0],
+            "src" => $imageSrc[0],
+            "width" => $imageSrc[1],
+            "height" => $imageSrc[2],
             "srcset" => wp_get_attachment_image_srcset($attachmentId, 'large'),
             "sizes" => wp_get_attachment_image_sizes($attachmentId, 'large'),
         ];
