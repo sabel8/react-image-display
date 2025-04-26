@@ -10,63 +10,17 @@ Author: Abel Sarandi
 if (!defined('ABSPATH')) {
     exit;
 }
-// Function to get the correct asset URL from the Vite manifest
-function rid_get_asset_url()
-{
-    $manifest_path = plugin_dir_path(__FILE__) . 'dist/.vite/manifest.json';
-    if (!file_exists($manifest_path)) {
-        return '';
-    }
 
-    $manifest = json_decode(file_get_contents($manifest_path), true);
-    return isset($manifest["index.html"]) ? plugin_dir_url(__FILE__) . 'dist/' . $manifest["index.html"]['file'] : '';
-}
-function rid_get_css_url()
-{
-    $manifest_path = plugin_dir_path(__FILE__) . 'dist/.vite/manifest.json';
-    if (!file_exists($manifest_path)) {
-        return '';
-    }
-
-    $manifest = json_decode(file_get_contents($manifest_path), true);
-    return isset($manifest["index.html"]) ? plugin_dir_url(__FILE__) . 'dist/' . $manifest["index.html"]['css'][0] : '';
-}
-
-function rid_enqueue_scripts()
-{
-    $main_js = rid_get_asset_url();
-    if ($main_js) {
-        wp_enqueue_script(
-            'react-image-display',
-            $main_js,
-            array(),
-            null, // No need for versioning since the filename is hashed
-            true
-        );
-    }
-}
-function rid_enqueue_styles()
-{
-    $main_css = rid_get_css_url();
-    if ($main_css) {
-        wp_enqueue_style('react-image-display', $main_css, []);
-    }
-}
-
-add_action('wp_enqueue_scripts', 'rid_enqueue_scripts');
-add_action('wp_enqueue_scripts', 'rid_enqueue_styles');
-
-$galleries = array();
+$galleries = [];
 
 // Create a shortcode to display the React app
-function rid_display_react_app($atts)
-{
+add_shortcode('react_image_display', function ($atts) {
     $atts = shortcode_atts(
-        array(
+        [
             'images' => '', // Comma-separated list of image URLs
             'elementid' => 'react-image-display',
             'rowheight' => '400',
-        ),
+        ],
         $atts,
         'react_image_display'
     );
@@ -75,24 +29,33 @@ function rid_display_react_app($atts)
 
     global $galleries;
 
-    $galleries[] = array(
+    $galleries[] = [
         'images' => $images,
         'elementid' => $atts['elementid'],
         'rowheight' => $atts['rowheight'],
-    );
+    ];
 
-    wp_localize_script('react-image-display', 'rid_params', array(
-        'galleries' => $galleries,
-    ));
+    rid_enqueue_files();
 
-    return '<div id="' . $atts['elementid'] . '"></div>';
-}
-add_shortcode('react_image_display', 'rid_display_react_app');
+    wp_localize_script('react-image-display', 'rid_params', ['galleries' => $galleries]);
 
-function add_example_images($images)
+    return "<div id=" . $atts['elementid'] . ">" . "new" . "</div>";
+});
+
+function rid_enqueue_files()
 {
-    $images[] = '2024/02/DSC_0883-2-scaled.jpg';
-    $images[] = '2024/02/3-1-scaled.jpg';
-    return $images;
+    $manifest_path = plugin_dir_path(__FILE__) . 'dist/.vite/manifest.json';
+    if (!file_exists($manifest_path)) {
+        wp_die("Error: Manifest file not found. Please check the plugin installation.");
+    }
+
+    $manifest = json_decode(file_get_contents($manifest_path), true);
+    if (!isset($manifest["index.html"])) {
+        wp_die("Error: Manifest file is not in the expected format. Please check the plugin installation.");
+    }
+    $css = plugin_dir_url(__FILE__) . 'dist/' . $manifest["index.html"]["css"][0];
+    $js = plugin_dir_url(__FILE__) . 'dist/' . $manifest["index.html"]["file"];
+
+    wp_enqueue_script('react-image-display', $js, []);
+    wp_enqueue_style('react-image-display', $css, []);
 }
-add_filter('react-image-display', 'add_example_images');
