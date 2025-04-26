@@ -1,38 +1,21 @@
 import { useEffect, useState } from "react";
-import { expandUrlIfNeeded, getImageSize } from "./helper";
+import { getImageSize } from "./helper";
 import { useQuery } from "@tanstack/react-query";
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import PhotoAlbum from "react-photo-album";
 import "photoswipe/style.css";
 import { Spinner } from "./Spinner/Spinner";
 import PhotoSwipe from "photoswipe";
+import type { Gallery } from "./types/types";
 
-type Image = {
-  src: string;
-  width: number;
-  height: number;
-};
-
-async function fetchImageDimensions(urls: string[]): Promise<Image[]> {
-  const result = await Promise.all(
-    urls.map(async (url) => {
-      const { width, height } = await getImageSize(url);
-      return { src: url, width, height };
-    })
-  );
-  return result;
-}
-
-function App(props: { elementId?: string, images: string[], rowheight?: number }) {
-  const images: string[] = props.images;
-  const galleryID = "gallery-" +( props.elementId ??"react-image-display");
-  const height = props.rowheight ?? 400;
-
-  const processedImages = images.map(expandUrlIfNeeded);
+function App({ elementid, images, rowheight }: Gallery) {
+  const galleryID = "gallery-" + (elementid ?? "react-image-display");
+  const height = rowheight ?? 400;
 
   const query = useQuery({
-    queryKey: ["image-dimensions", processedImages.join(",")],
-    queryFn: () => fetchImageDimensions(processedImages),
+    queryKey: [galleryID, "image-dimensions", images.join(",")],
+    queryFn: () =>
+      Promise.all(images.map(async (image) => await getImageSize(image))),
   });
 
   const [lightbox, setLightbox] = useState<PhotoSwipeLightbox | null>(null);
@@ -104,7 +87,13 @@ function App(props: { elementId?: string, images: string[], rowheight?: number }
           target="_blank"
           rel="noreferrer"
         >
-          <img src={imageProps.src} width="100%" height="100%" />
+          <img
+            src={imageProps.src}
+            srcSet={photo.srcset}
+            sizes={photo.sizes}
+            width="100%"
+            height="100%"
+          />
         </a>
       )}
     />

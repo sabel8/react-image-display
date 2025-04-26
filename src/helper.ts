@@ -1,11 +1,13 @@
+import type { GalleryImage, RenderedImage } from "./types/types";
+
 export const getImageSize = (
-  url: string,
+  image: GalleryImage,
   options?: { timeout?: number }
-): Promise<{ width: number; height: number }> => {
+): Promise<RenderedImage> => {
   return new Promise((resolve, reject) => {
     if (typeof window === "undefined") return reject("WINDOW_IS_NOT_DEFINED");
 
-    if (!url) return reject("URL_IS_NOT_DEFINED");
+    if (!image.src) return reject("URL_IS_NOT_DEFINED");
 
     let timer: number | null = null;
 
@@ -16,7 +18,7 @@ export const getImageSize = (
         window.clearTimeout(timer);
       }
 
-      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+      resolve({ ...image, width: img.naturalWidth, height: img.naturalHeight });
     });
 
     img.addEventListener("error", (event) => {
@@ -27,18 +29,12 @@ export const getImageSize = (
       reject(`${event.type}: ${event.message}`);
     });
 
-    img.src = url;
+    img.srcset = image.srcset;
+    img.sizes = image.sizes;
+    img.src = image.src;
 
     if (options?.timeout) {
       timer = window.setTimeout(() => reject("TIMEOUT"), options.timeout);
     }
   });
-};
-
-export const expandUrlIfNeeded = (url: string): string => {
-  if (!url) return "";
-  if (!url.startsWith("http://") && !url.startsWith("https://"))
-    return `${window.origin}/wp-content/uploads/${url}`;
-
-  return url;
 };

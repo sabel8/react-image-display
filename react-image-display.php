@@ -25,12 +25,20 @@ add_shortcode('react_image_display', function ($atts) {
         'react_image_display'
     );
 
-    $images = array_map('trim', explode(',', $atts['images']));
+    $imagesWithResponsiveData = array_map(function ($image) {
+        $imagePath = trim($image);
+        $attachmentId = attachment_url_to_postid($imagePath);
+        return [
+            "src" => wp_get_attachment_image_src($attachmentId, 'large')[0],
+            "srcset" => wp_get_attachment_image_srcset($attachmentId, 'large'),
+            "sizes" => wp_get_attachment_image_sizes($attachmentId, 'large'),
+        ];
+    }, explode(',', $atts['images']));
 
     global $galleries;
 
     $galleries[] = [
-        'images' => $images,
+        'images' => $imagesWithResponsiveData,
         'elementid' => $atts['elementid'],
         'rowheight' => $atts['rowheight'],
     ];
