@@ -4,6 +4,7 @@ import PhotoAlbum from "react-photo-album";
 import "photoswipe/style.css";
 import PhotoSwipe from "photoswipe";
 import type { Gallery } from "./types/types";
+import ImageComponent from "./ImageComponent";
 
 function App({ elementid, images, rowheight }: Gallery) {
   const galleryID = "gallery-" + (elementid ?? "react-image-display");
@@ -59,13 +60,7 @@ function App({ elementid, images, rowheight }: Gallery) {
           target="_blank"
           rel="noreferrer"
         >
-          <img
-            src={imageProps.src}
-            srcSet={photo.srcset}
-            sizes={photo.sizes}
-            width="100%"
-            height="100%"
-          />
+          <ImageComponent image={photo} />
         </a>
       )}
     />

@@ -12,6 +12,7 @@ export type GalleryImage = {
   sizes: string;
   width: number;
   height: number;
+  blurhash?: string;
 };
 
 export type Gallery = {
