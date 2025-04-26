@@ -39,7 +39,7 @@ add_shortcode('react_image_display', function ($atts) {
 
     wp_localize_script('react-image-display', 'rid_params', ['galleries' => $galleries]);
 
-    return "<div id=" . $atts['elementid'] . ">" . "new" . "</div>";
+    return "<div id=" . $atts['elementid'] . "></div>";
 });
 
 function rid_enqueue_files()
