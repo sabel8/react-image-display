@@ -13,7 +13,6 @@
     "photoswipe": "^5.4.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-grid-gallery": "^1.0.1",
     "react-photo-album": "^2.4.1"
   },
   "devDependencies": {
