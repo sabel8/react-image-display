@@ -2,7 +2,7 @@
 /*
 Plugin Name: React Image Display
 Description: A WordPress plugin that uses React to display images.
-Version: 1.0
+Version: 1.1
 Author: Abel Sarandi
 */
 
@@ -26,9 +26,14 @@ add_shortcode('react_image_display', function ($atts) {
     );
 
     $imagesWithResponsiveData = array_map(function ($image) {
-        $imagePath = trim($image);
+        // if there is an extension in the image, remove it
+        $imagePath = explode(".", trim($image))[0];
         $attachmentId = attachment_url_to_postid($imagePath);
         $imageSrc = wp_get_attachment_image_src($attachmentId, 'large');
+
+        if (!$imageSrc) {
+            wp_die("Error: Image not found. Please check the image URL.");
+        }
 
         return [
             "src" => $imageSrc[0],
