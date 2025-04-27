@@ -16,3 +16,7 @@
 ```
 [react-image-display images='www.link.to/image/1, www.link.to/image/2' elementid='my-gallery' rowheight='250']
 ```
+
+## Compatibility with image-blurhash
+
+You can use [image-blurhash](https://wordpress.com/plugins/image-blur) to display blurred version of images before loading the true image. Just simply download and activate the plugin, the rest should be working automatically. Otherwise, the shortode will just render grey boxes during loading.
