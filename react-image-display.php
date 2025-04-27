@@ -26,13 +26,21 @@ add_shortcode('react_image_display', function ($atts) {
     );
 
     $imagesWithResponsiveData = array_map(function ($image) {
-        // if there is an extension in the image, remove it
-        $imagePath = explode(".", trim($image))[0];
+        $imagePath = trim($image);
         $attachmentId = attachment_url_to_postid($imagePath);
+        if (!$attachmentId) {
+            // try the scaled version of the image
+            $parts = explode(".", $imagePath);
+            $scaledPath = $parts[0] . "-scaled." . $parts[1];
+            $attachmentId = attachment_url_to_postid($scaledPath);
+        }
         $imageSrc = wp_get_attachment_image_src($attachmentId, 'large');
 
         if (!$imageSrc) {
-            wp_die("Error: Image not found ($image). Please check the image URL.");
+            error_log("Error: Image not found ($imagePath). Please check the image URL.");
+            if ($scaledPath) {
+                error_log("also tried: $scaledPath");
+            }
         }
 
         return [
