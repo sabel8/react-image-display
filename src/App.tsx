@@ -27,7 +27,6 @@ function App({ elementid, images, rowheight }: Gallery) {
     };
   }, [galleryID, lightbox]);
 
-
   return (
     <PhotoAlbum
       layout="rows"
@@ -50,6 +49,7 @@ function App({ elementid, images, rowheight }: Gallery) {
           href={imageProps.src}
           data-pswp-width={photo.width}
           data-pswp-height={photo.height}
+          data-pswp-srcset={photo.srcset}
           style={{
             // height: imageProps.height,
             width: imageProps.width,
