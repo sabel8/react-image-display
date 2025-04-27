@@ -32,7 +32,7 @@ add_shortcode('react_image_display', function ($atts) {
         $imageSrc = wp_get_attachment_image_src($attachmentId, 'large');
 
         if (!$imageSrc) {
-            wp_die("Error: Image not found. Please check the image URL.");
+            wp_die("Error: Image not found ($image). Please check the image URL.");
         }
 
         return [
